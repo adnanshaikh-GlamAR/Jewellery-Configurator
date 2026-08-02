@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fynd GlamAR Jewellery Viewer</title>
+    <link rel="icon" href="assets/fynd-glamar.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #ffffff;
+        --ink: #141414;
+        --muted: #d7d7dd;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body,
+      #viewer {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      body {
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .loader {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: center;
+        background: var(--bg);
+        transition:
+          opacity 420ms ease,
+          visibility 420ms ease;
+      }
+
+      .loader.is-hidden {
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      .loader-inner {
+        width: min(260px, 62vw);
+        display: grid;
+        justify-items: center;
+        gap: 22px;
+      }
+
+      .loader-logo {
+        width: min(220px, 56vw);
+        height: auto;
+        display: block;
+      }
+
+      .loader-bar {
+        width: min(230px, 56vw);
+        height: 5px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--muted);
+      }
+
+      .loader-bar::before {
+        content: "";
+        display: block;
+        width: 42%;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--ink);
+        animation: load 1.15s ease-in-out infinite;
+      }
+
+      .error {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+        place-items: center;
+        padding: 24px;
+        color: var(--ink);
+        background: var(--bg);
+        text-align: center;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      .error.is-visible {
+        display: grid;
+      }
+
+      @keyframes load {
+        0% {
+          transform: translateX(-110%);
+        }
+
+        55% {
+          transform: translateX(75%);
+        }
+
+        100% {
+          transform: translateX(245%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="viewer"></div>
+
+    <div class="loader" role="status" aria-live="polite" aria-label="Loading">
+      <div class="loader-inner">
+        <img
+          class="loader-logo"
+          src="assets/fynd-glamar.svg"
+          alt="Fynd GlamAR"
+        />
+        <div class="loader-bar" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="error" role="alert">
+      The 3D viewer could not load. Please refresh the page.
+    </div>
+
+    <script>
+      const PROJECT_SLUG = "548bcaa";
+      const PROJECT_API = `https://api.ijewel.design/rest/v1/projects?select=*&slug=eq.${PROJECT_SLUG}`;
+      const FALLBACK_PROJECT = {
+        name: "Costco - 3D Ring",
+        description: "GlamAR - Fynd",
+        poster_url:
+          "https://cdn1.ijewel.design/2c83d4c024ceb93bd095682c8b72c2e42a4274fa/6a6b1d60-76f2/.projects/268db6fb-7b97-4e2e-80ac-547688468363.poster.png",
+        project_data: {
+          version: "v9",
+          modelUrl:
+            "https://cdn1.ijewel.design/a13e578ff8a14d42289ad91fce94ace47eb35acd/6a6b1d5e-88d9/Costco---3D-Ring218.glb",
+          cameraConfig: {
+            target: {
+              x: -0.1674313977726706,
+              y: 0.3724364915332772,
+              z: 0.13953509545961776,
+              isVector3: true,
+            },
+            position: {
+              x: -8.192769960993825,
+              y: 5.414787870753264,
+              z: 10.413897841514563,
+              isVector3: true,
+            },
+            userData: {},
+            camOptions: {
+              fov: 25,
+              top: 1,
+              left: -1,
+              type: "PerspectiveCamera",
+              zoom: 1,
+              focus: 10,
+              right: 1,
+              aspect: "auto",
+              bottom: -1,
+              frustumSize: 1,
+              controlsMode: "orbit",
+              controlsEnabled: true,
+            },
+            camControls: {
+              type: "OrbitControls",
+              maxZoom: 1000,
+              minZoom: 0.01,
+              clampMax: {
+                x: 1000000,
+                y: 1000000,
+                z: 1000000,
+                isVector3: true,
+              },
+              clampMin: {
+                x: -1000000,
+                y: -1000000,
+                z: -1000000,
+                isVector3: true,
+              },
+              panSpeed: 1,
+              dollyZoom: false,
+              enablePan: true,
+              zoomSpeed: 0.15,
+              autoRotate: false,
+              enableZoom: true,
+              keyPanSpeed: 7,
+              maxDistance: 1000,
+              minDistance: 0.35,
+              rotateSpeed: 2,
+              enableRotate: true,
+              maxZoomSpeed: 0.2,
+              zoomToCursor: false,
+              dampingFactor: 0.08,
+              enableDamping: true,
+              maxPolarAngle: Math.PI,
+              minPolarAngle: 0,
+              autoPullTarget: false,
+              autoPushTarget: false,
+              autoRotateSpeed: 2,
+              maxAzimuthAngle: 1000000,
+              minAzimuthAngle: -1000000,
+              screenSpacePanning: true,
+            },
+          },
+          isPlayground: true,
+        },
+      };
+
+      const loader = document.querySelector(".loader");
+      const error = document.querySelector(".error");
+      let loaderHidden = false;
+
+      function hideLoader() {
+        if (loaderHidden) return;
+        loaderHidden = true;
+        loader.classList.add("is-hidden");
+        window.setTimeout(() => loader.remove(), 700);
+      }
+
+      function showError() {
+        hideLoader();
+        error.classList.add("is-visible");
+      }
+
+      function loadScript(src) {
+        return new Promise((resolve, reject) => {
+          const existing = document.querySelector(`script[src="${src}"]`);
+          if (existing) {
+            resolve();
+            return;
+          }
+
+          const script = document.createElement("script");
+          script.src = src;
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error(`Failed to load ${src}`));
+          document.body.appendChild(script);
+        });
+      }
+
+      async function loadProject() {
+        try {
+          const response = await fetch(PROJECT_API, {
+            headers: { accept: "*/*" },
+            method: "GET",
+            mode: "cors",
+          });
+          const projects = await response.json();
+          return projects[0] || FALLBACK_PROJECT;
+        } catch (err) {
+          console.warn(err);
+          return FALLBACK_PROJECT;
+        }
+      }
+
+      function normalizeProject(project) {
+        const projectData = { ...project.project_data };
+        const versionNumber = Number.parseInt(
+          String(projectData.version || "v0").replace("v", ""),
+          10,
+        );
+
+        projectData.basePath =
+          projectData.basePath ||
+          (versionNumber > 3
+            ? "https://packs.ijewel3d.com/files/"
+            : `https://assets.ijewel.design/${projectData.version || "v1"}/`);
+        projectData.name = project.name;
+        projectData.description = project.description;
+        projectData.posterUrl = projectData.posterUrl || project.poster_url;
+        projectData.logo = null;
+        projectData.currentPose = projectData.currentPose || null;
+        projectData.isPlayground = true;
+        projectData.brandingSettings = projectData.brandingSettings || {
+          enable: false,
+          maxWidth: 720,
+          maxHeight: 192,
+          objectFit: "contain",
+          positionX: 0.5,
+          positionY: 0,
+          showLoadingScreenLogo: true,
+        };
+
+        return projectData;
+      }
+
+      function getViewerOptions(projectData) {
+        return {
+          showCard: false,
+          showShareButton: true,
+          showConfigurator: true,
+          showZoomButtons: true,
+          hideQuality: false,
+          hideRotateCamera: false,
+          hideCameraViews: false,
+          hideGltfAnimations: true,
+          hideFitScene: false,
+          hideFullScreen: false,
+          showPosterInLoadingScreen: false,
+          disableInteractionPrompt: true,
+          runRotateCamera: true,
+          transparentBg: false,
+          showSwitchNode: true,
+          embedLogo: { icon: null, logo: null, url: null },
+          shareUrl: null,
+          showProfile: false,
+          useIjewelLogo: false,
+          configuratorBottomOffsetPx: window.innerWidth < 768 ? 20 : 0,
+          brandingSettings: projectData.brandingSettings,
+          hideTryOn: false,
+        };
+      }
+
+      function getDomRoots() {
+        const roots = [document];
+        const seen = new Set(roots);
+
+        function visit(root) {
+          for (const element of root.querySelectorAll("*")) {
+            if (element.shadowRoot && !seen.has(element.shadowRoot)) {
+              seen.add(element.shadowRoot);
+              roots.push(element.shadowRoot);
+              visit(element.shadowRoot);
+            }
+          }
+        }
+
+        visit(document);
+        return roots;
+      }
+
+      function hideIjewelBranding(root) {
+        root.querySelectorAll("#ijewel-viewer-logo").forEach((logo) => {
+          logo.style.setProperty("display", "none", "important");
+          logo.style.setProperty("visibility", "hidden", "important");
+          logo.style.setProperty("pointer-events", "none", "important");
+        });
+      }
+
+      function patchViewerUi() {
+        getDomRoots().forEach((root) => {
+          hideIjewelBranding(root);
+        });
+      }
+
+      function startViewerUiPatchLoop() {
+        patchViewerUi();
+        window.setInterval(patchViewerUi, 1000);
+      }
+
+      window.addEventListener("ijewel-viewer-ready", () => {
+        startViewerUiPatchLoop();
+        window.setTimeout(hideLoader, 650);
+      });
+
+      (async () => {
+        try {
+          const project = await loadProject();
+          const projectData = normalizeProject(project);
+
+          await loadScript(
+            "https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.22.0.js",
+          );
+          await loadScript(
+            "https://releases.ijewel3d.com/libs/mini-viewer/0.6.11/bundle.nowebgi.iife.js",
+          );
+
+          window.fyndGlamarViewer = new ijewelViewer.Viewer(
+            document.getElementById("viewer"),
+            projectData,
+            getViewerOptions(projectData),
+          );
+
+          startViewerUiPatchLoop();
+        } catch (err) {
+          console.error(err);
+          showError();
+        }
+      })();
+
+      window.setTimeout(hideLoader, 14000);
+    </script>
+  </body>
+</html>

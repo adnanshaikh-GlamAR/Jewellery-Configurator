@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fynd GlamAR Jewellery Configurator</title>
+    <meta
+      name="description"
+      content="A branded Fynd GlamAR jewellery configurator powered by the iJewel 3D viewer."
+    />
+    <link rel="icon" href="assets/fynd-glamar.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #ffffff;
+        --ink: #141414;
+        --muted: #d7d7dd;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      body {
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      .viewer-frame {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100dvh;
+        border: 0;
+        background: var(--bg);
+      }
+
+      .loader {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: grid;
+        place-items: center;
+        background: var(--bg);
+        transition:
+          opacity 420ms ease,
+          visibility 420ms ease;
+      }
+
+      .loader.is-hidden {
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      .loader-inner {
+        width: min(260px, 62vw);
+        display: grid;
+        justify-items: center;
+        gap: 22px;
+      }
+
+      .loader-logo {
+        width: min(220px, 56vw);
+        height: auto;
+        display: block;
+      }
+
+      .loader-bar {
+        width: min(230px, 56vw);
+        height: 5px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--muted);
+      }
+
+      .loader-bar::before {
+        content: "";
+        display: block;
+        width: 42%;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--ink);
+        animation: load 1.15s ease-in-out infinite;
+      }
+
+      @keyframes load {
+        0% {
+          transform: translateX(-110%);
+        }
+
+        55% {
+          transform: translateX(75%);
+        }
+
+        100% {
+          transform: translateX(245%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <iframe
+      class="viewer-frame"
+      title="Jewellery 3D configurator"
+      src="viewer.html?v=548bcaa-1"
+      allow="autoplay; fullscreen; xr-spatial-tracking; web-share"
+      allowfullscreen
+    ></iframe>
+
+    <div class="loader" role="status" aria-live="polite" aria-label="Loading">
+      <div class="loader-inner">
+        <img
+          class="loader-logo"
+          src="assets/fynd-glamar.svg"
+          alt="Fynd GlamAR"
+        />
+        <div class="loader-bar" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <script>
+      const frame = document.querySelector(".viewer-frame");
+      const loader = document.querySelector(".loader");
+      let hidden = false;
+
+      function hideLoader() {
+        if (hidden) return;
+        hidden = true;
+        loader.classList.add("is-hidden");
+        window.setTimeout(() => loader.remove(), 700);
+      }
+
+      frame.addEventListener("load", () => {
+        window.setTimeout(hideLoader, 6500);
+      });
+
+      window.setTimeout(hideLoader, 14000);
+    </script>
+  </body>
+</html>
