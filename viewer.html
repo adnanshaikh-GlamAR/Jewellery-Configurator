@@ -133,6 +133,22 @@
     </div>
 
     <script>
+      const CUBE_ICON = `
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+          <path d="m3.3 7 8.7 5 8.7-5"></path>
+          <path d="M12 22V12"></path>
+        </svg>
+      `;
+
       const PROJECT_SLUG = "548bcaa";
       const PROJECT_API = `https://api.ijewel.design/rest/v1/projects?select=*&slug=eq.${PROJECT_SLUG}`;
       const FALLBACK_PROJECT = {
@@ -341,6 +357,20 @@
         return roots;
       }
 
+      function applyCubeStyles(element, size = 40) {
+        element.style.width = `${size}px`;
+        element.style.height = `${size}px`;
+        element.style.minWidth = `${size}px`;
+        element.style.minHeight = `${size}px`;
+        element.style.display = "grid";
+        element.style.placeItems = "center";
+        element.style.borderRadius = "999px";
+        element.style.color = "#111111";
+        element.style.background = "rgba(255, 255, 255, 0.9)";
+        element.style.border = "1px solid rgba(239, 239, 239, 0.95)";
+        element.style.pointerEvents = "none";
+      }
+
       function hideIjewelBranding(root) {
         root.querySelectorAll("#ijewel-viewer-logo").forEach((logo) => {
           logo.style.setProperty("display", "none", "important");
@@ -349,9 +379,33 @@
         });
       }
 
+      function replaceNativeConfiguratorIcon(root) {
+        const iconImages = Array.from(root.querySelectorAll("img")).filter(
+          (image) =>
+            image.className.includes("h-4") &&
+            image.className.includes("h-full") &&
+            image.src.startsWith("data:image"),
+        );
+
+        iconImages.forEach((image) => {
+          if (image.parentElement?.dataset.glamarNativeCube === "true") return;
+
+          const cube = document.createElement("span");
+          cube.dataset.glamarNativeCube = "true";
+          cube.innerHTML = CUBE_ICON;
+          applyCubeStyles(cube, 32);
+
+          const svg = cube.querySelector("svg");
+          svg.style.width = "22px";
+          svg.style.height = "22px";
+          image.replaceWith(cube);
+        });
+      }
+
       function patchViewerUi() {
         getDomRoots().forEach((root) => {
           hideIjewelBranding(root);
+          replaceNativeConfiguratorIcon(root);
         });
       }
 
